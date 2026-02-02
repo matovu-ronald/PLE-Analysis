@@ -1,0 +1,5 @@
+[theme]
+primaryColor = "#483d8b"        # Dark slate blue
+backgroundColor = "#ffffff"     # White
+secondaryBackgroundColor = "#f0f2f6" # Light gray
+textColor = "#262730"           # Dark font color

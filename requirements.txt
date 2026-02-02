@@ -1,0 +1,23 @@
+# PLE Data Analysis Dashboard - Requirements
+# Install with: pip install -r requirements.txt
+
+# Core Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Dashboard Framework
+streamlit>=1.30.0
+
+# Visualization
+plotly>=5.18.0
+
+# Data Loading
+requests>=2.31.0
+
+# Optional: For enhanced functionality
+openpyxl>=3.1.0  # For reading Excel files
+xlrd>=2.0.1      # For reading older Excel formats
+
+# Development Tools (optional)
+# black>=23.0.0  # Code formatter
+# flake8>=6.0.0  # Linter
