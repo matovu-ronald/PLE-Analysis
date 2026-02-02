@@ -84,7 +84,7 @@ st.markdown(
     .stMetric [data-testid="stMetricValue"] {
         font-size: 2rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -95,7 +95,7 @@ st.markdown(
         font-size: 3rem;
         font-weight: 800;
         letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -146,14 +146,14 @@ st.markdown(
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
         color: white !important;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
     
     /* Premium button styling */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
         color: white;
         border: none;
         border-radius: 10px;
@@ -199,7 +199,7 @@ st.markdown(
     
     /* Stylish multiselect tags */
     .stMultiSelect span[data-baseweb="tag"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%) !important;
         color: white !important;
         border-radius: 8px !important;
         padding: 6px 14px !important;
@@ -237,7 +237,7 @@ st.markdown(
     }
     
     .stRadio label[data-checked="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%) !important;
         color: white !important;
         border-color: transparent !important;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
@@ -260,7 +260,7 @@ st.markdown(
     }
     
     [data-testid="stDataFrame"] thead tr th {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%) !important;
         color: white !important;
         font-weight: 700 !important;
         font-size: 0.875rem !important;
@@ -328,7 +328,7 @@ st.markdown(
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
         border-radius: 10px;
     }
     
@@ -345,10 +345,10 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Color palette - Modern vibrant colors
+# Color palette - Modern vibrant colors with UNICEF blue
 COLORS = {
-    "primary": "#667eea",
-    "secondary": "#764ba2",
+    "primary": "#1CABE2",
+    "secondary": "#00AEEF",
     "success": "#06d6a0",
     "warning": "#ffd93d",
     "danger": "#ef476f",
@@ -356,9 +356,9 @@ COLORS = {
     "boys": "#4c9aff",
     "girls": "#ff9500",
     "divisions": ["#06d6a0", "#118ab2", "#ffd93d", "#ef476f", "#a29bfe", "#6c5ce7"],
-    "gradient1": ["#667eea", "#764ba2"],
+    "gradient1": ["#1CABE2", "#00AEEF"],
     "gradient2": ["#06d6a0", "#118ab2"],
-    "chart_colors": ["#667eea", "#06d6a0", "#ffd93d", "#ef476f", "#4c9aff", "#a29bfe"],
+    "chart_colors": ["#1CABE2", "#06d6a0", "#ffd93d", "#ef476f", "#4c9aff", "#a29bfe"],
 }
 
 # Google Sheet configuration
@@ -651,7 +651,7 @@ def main():
         st.markdown(
             """
             <div style='text-align: center; padding: 24px; margin-bottom: 24px;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
                         border-radius: 16px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);'>
                 <h2 style='margin: 0; color: white; font-size: 1.5em; font-weight: 700; letter-spacing: -0.3px;'>
                     Control Panel
@@ -887,7 +887,7 @@ def main():
         with col1:
             st.markdown(
                 """
-                <div style='text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                <div style='text-align: center; padding: 20px; background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
                             border-radius: 12px; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);'>
                     <p style='margin: 0; font-size: 0.9em; opacity: 0.9;'>📚 Total Students</p>
                     <h2 style='margin: 10px 0 0 0; color: white; font-size: 2em;'>{:,.0f}</h2>
@@ -1172,7 +1172,7 @@ def show_overview(data, gender_filter="All", grade_filter=None):
     with col1:
         st.markdown(
             f"""
-            <div style='text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            <div style='text-align: center; padding: 20px; background: linear-gradient(135deg, #1CABE2 0%, #0095DA 100%);
                         border-radius: 12px; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);'>
                 <p style='margin: 0; font-size: 0.9em; opacity: 0.9;'>📝 Registered</p>
                 <h2 style='margin: 10px 0 0 0; color: white; font-size: 2em;'>{registered_total:,}</h2>
