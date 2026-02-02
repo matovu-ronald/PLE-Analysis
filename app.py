@@ -926,9 +926,6 @@ def main():
                 ),
                 unsafe_allow_html=True,
             )
-            st.caption(
-                "📌 Percentage of students who scored Division 1 (highest performance grade)"
-            )
 
         with col4:
             st.markdown(
