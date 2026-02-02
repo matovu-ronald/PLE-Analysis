@@ -1317,6 +1317,164 @@ def show_overview(data, gender_filter="All", grade_filter=None):
                 "Girls Absent", f"{girls_absent:,}", f"{100-girls_participation:.1f}%"
             )
 
+    # Data Explorer Section
+    st.markdown("---")
+    st.markdown(
+        "<h2 style='color: #5f6368; margin-top: 30px;'>🔍 Data Explorer</h2>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<p style='color: #80868b; margin-bottom: 20px;'>Search, filter, and export your data</p>",
+        unsafe_allow_html=True,
+    )
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        search = st.text_input(
+            "🔍 Search districts",
+            "",
+            placeholder="Type to search by district name...",
+        )
+
+    with col2:
+        sort_by = st.selectbox(
+            "Sort by",
+            ["Pass_Rate", "Registered - Total", "Excellence_Rate", "District"],
+            index=0,
+        )
+
+    # Filter data based on search
+    filtered_data = data.copy()
+    if search and "District" in filtered_data.columns:
+        filtered_data = filtered_data[
+            filtered_data["District"].str.contains(search, case=False, na=False)
+        ]
+
+    # Column selector
+    available_cols = filtered_data.columns.tolist()
+    default_cols = [
+        col
+        for col in ["District", "Pass_Rate", "Excellence_Rate", "Registered - Total"]
+        if col in available_cols
+    ]
+
+    cols_to_show = st.multiselect(
+        "📋 Select columns to display",
+        available_cols,
+        default=default_cols[: min(4, len(default_cols))],
+    )
+
+    if cols_to_show:
+        # Sort and display data
+        if sort_by in filtered_data.columns:
+            display_data = (
+                filtered_data[cols_to_show]
+                .sort_values(sort_by, ascending=False)
+                .reset_index(drop=True)
+            )
+        else:
+            display_data = filtered_data[cols_to_show].reset_index(drop=True)
+
+        # Show record count
+        st.markdown(
+            f"<p style='color: #80868b;'>Showing {len(display_data):,} of {len(data):,} records</p>",
+            unsafe_allow_html=True,
+        )
+
+        # Calculate stats before formatting (need numeric values)
+        stats_data = display_data.copy()
+
+        # Format percentage columns for display
+        display_data = display_data.copy()
+        if "Pass_Rate" in display_data.columns:
+            display_data["Pass_Rate"] = display_data["Pass_Rate"].apply(
+                lambda x: f"{x:.1f}%"
+            )
+        if "Excellence_Rate" in display_data.columns:
+            display_data["Excellence_Rate"] = display_data["Excellence_Rate"].apply(
+                lambda x: f"{x:.1f}%"
+            )
+        if "Boys_Pass_Rate" in display_data.columns:
+            display_data["Boys_Pass_Rate"] = display_data["Boys_Pass_Rate"].apply(
+                lambda x: f"{x:.1f}%"
+            )
+        if "Girls_Pass_Rate" in display_data.columns:
+            display_data["Girls_Pass_Rate"] = display_data["Girls_Pass_Rate"].apply(
+                lambda x: f"{x:.1f}%"
+            )
+
+        # Display dataframe with custom styling
+        st.dataframe(
+            display_data,
+            use_container_width=True,
+            height=400,
+            hide_index=False,
+        )
+
+        # Export options
+        col1, col2, col3 = st.columns([1, 1, 2])
+
+        with col1:
+            csv = display_data.to_csv(index=False)
+            st.download_button(
+                label="📥 Download as CSV",
+                data=csv,
+                file_name=f"ple_data_filtered_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
+                mime="text/csv",
+            )
+
+        with col2:
+            try:
+                from io import BytesIO
+
+                excel_buffer = BytesIO()
+                with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
+                    display_data.to_excel(writer, index=False, sheet_name="PLE Data")
+                excel_data = excel_buffer.getvalue()
+
+                st.download_button(
+                    label="📊 Download as Excel",
+                    data=excel_data,
+                    file_name=f"ple_data_filtered_{pd.Timestamp.now().strftime('%Y%m%d')}.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            except ImportError:
+                st.info("📊 Excel export requires openpyxl. Use CSV export instead.")
+
+        # Quick stats about filtered data (use numeric stats_data)
+        if len(stats_data) > 0:
+            st.markdown("---")
+            st.markdown("### 📈 Quick Stats (Filtered Data)")
+
+            stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
+
+            with stat_col1:
+                if "Registered - Total" in stats_data.columns:
+                    st.metric(
+                        "Total Students",
+                        f"{stats_data['Registered - Total'].sum():,.0f}",
+                    )
+
+            with stat_col2:
+                if "Pass_Rate" in stats_data.columns:
+                    st.metric(
+                        "Avg Pass Rate",
+                        f"{stats_data['Pass_Rate'].mean():.1f}%",
+                    )
+
+            with stat_col3:
+                if "Excellence_Rate" in stats_data.columns:
+                    st.metric(
+                        "Avg Division 1",
+                        f"{stats_data['Excellence_Rate'].mean():.1f}%",
+                    )
+
+            with stat_col4:
+                st.metric("Districts", len(stats_data))
+    else:
+        st.info("👆 Please select at least one column to display")
+
 
 def show_performance(data, gender_filter="All"):
     """Performance tab"""
@@ -1950,164 +2108,6 @@ def show_trends(data, gender_filter="All", grade_filter=None):
         st.dataframe(display_data, use_container_width=True, hide_index=True)
     else:
         st.info("Need at least 2 years of data for growth analysis")
-
-    # Data Explorer Section
-    st.markdown("---")
-    st.markdown(
-        "<h2 style='color: #5f6368; margin-top: 30px;'>🔍 Data Explorer</h2>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='color: #80868b; margin-bottom: 20px;'>Search, filter, and export your data</p>",
-        unsafe_allow_html=True,
-    )
-
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        search = st.text_input(
-            "🔍 Search districts",
-            "",
-            placeholder="Type to search by district name...",
-        )
-
-    with col2:
-        sort_by = st.selectbox(
-            "Sort by",
-            ["Pass_Rate", "Registered - Total", "Excellence_Rate", "District"],
-            index=0,
-        )
-
-    # Filter data based on search
-    filtered_data = data.copy()
-    if search and "District" in filtered_data.columns:
-        filtered_data = filtered_data[
-            filtered_data["District"].str.contains(search, case=False, na=False)
-        ]
-
-    # Column selector
-    available_cols = filtered_data.columns.tolist()
-    default_cols = [
-        col
-        for col in ["District", "Pass_Rate", "Excellence_Rate", "Registered - Total"]
-        if col in available_cols
-    ]
-
-    cols_to_show = st.multiselect(
-        "📋 Select columns to display",
-        available_cols,
-        default=default_cols[: min(4, len(default_cols))],
-    )
-
-    if cols_to_show:
-        # Sort and display data
-        if sort_by in filtered_data.columns:
-            display_data = (
-                filtered_data[cols_to_show]
-                .sort_values(sort_by, ascending=False)
-                .reset_index(drop=True)
-            )
-        else:
-            display_data = filtered_data[cols_to_show].reset_index(drop=True)
-
-        # Show record count
-        st.markdown(
-            f"<p style='color: #80868b;'>Showing {len(display_data):,} of {len(data):,} records</p>",
-            unsafe_allow_html=True,
-        )
-
-        # Calculate stats before formatting (need numeric values)
-        stats_data = display_data.copy()
-
-        # Format percentage columns for display
-        display_data = display_data.copy()
-        if "Pass_Rate" in display_data.columns:
-            display_data["Pass_Rate"] = display_data["Pass_Rate"].apply(
-                lambda x: f"{x:.1f}%"
-            )
-        if "Excellence_Rate" in display_data.columns:
-            display_data["Excellence_Rate"] = display_data["Excellence_Rate"].apply(
-                lambda x: f"{x:.1f}%"
-            )
-        if "Boys_Pass_Rate" in display_data.columns:
-            display_data["Boys_Pass_Rate"] = display_data["Boys_Pass_Rate"].apply(
-                lambda x: f"{x:.1f}%"
-            )
-        if "Girls_Pass_Rate" in display_data.columns:
-            display_data["Girls_Pass_Rate"] = display_data["Girls_Pass_Rate"].apply(
-                lambda x: f"{x:.1f}%"
-            )
-
-        # Display dataframe with custom styling
-        st.dataframe(
-            display_data,
-            use_container_width=True,
-            height=400,
-            hide_index=False,
-        )
-
-        # Export options
-        col1, col2, col3 = st.columns([1, 1, 2])
-
-        with col1:
-            csv = display_data.to_csv(index=False)
-            st.download_button(
-                label="📥 Download as CSV",
-                data=csv,
-                file_name=f"ple_data_filtered_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv",
-            )
-
-        with col2:
-            try:
-                from io import BytesIO
-
-                excel_buffer = BytesIO()
-                with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
-                    display_data.to_excel(writer, index=False, sheet_name="PLE Data")
-                excel_data = excel_buffer.getvalue()
-
-                st.download_button(
-                    label="📊 Download as Excel",
-                    data=excel_data,
-                    file_name=f"ple_data_filtered_{pd.Timestamp.now().strftime('%Y%m%d')}.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
-            except ImportError:
-                st.info("📊 Excel export requires openpyxl. Use CSV export instead.")
-
-        # Quick stats about filtered data (use numeric stats_data)
-        if len(stats_data) > 0:
-            st.markdown("---")
-            st.markdown("### 📈 Quick Stats (Filtered Data)")
-
-            stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
-
-            with stat_col1:
-                if "Registered - Total" in stats_data.columns:
-                    st.metric(
-                        "Total Students",
-                        f"{stats_data['Registered - Total'].sum():,.0f}",
-                    )
-
-            with stat_col2:
-                if "Pass_Rate" in stats_data.columns:
-                    st.metric(
-                        "Avg Pass Rate",
-                        f"{stats_data['Pass_Rate'].mean():.1f}%",
-                    )
-
-            with stat_col3:
-                if "Excellence_Rate" in stats_data.columns:
-                    st.metric(
-                        "Avg Division 1",
-                        f"{stats_data['Excellence_Rate'].mean():.1f}%",
-                    )
-
-            with stat_col4:
-                st.metric("Districts", len(stats_data))
-    else:
-        st.info("👆 Please select at least one column to display")
 
 
 def show_geographical_analysis(data):
